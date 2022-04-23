@@ -37,6 +37,9 @@ public class eexpss {
 		return app.run(argv);
 	}
 
+//~ ⭕ pinfo libqrcodegen-dev
+//~ https://github.com/nayuki/QR-Code-generator
+
 	private	void click(int n_press, double x, double y) {
 		stdout.printf("clicked.");
 //~ 		input.text = "clicked";
