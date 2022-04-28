@@ -12,10 +12,8 @@ app = 'clip2qrcode'
 lib_dependencies = [
     dependency('gtk4'),
     dependency('libadwaita-1'),
-#~     dependency('posix')
+    meson.get_compiler('vala').find_library('posix'),
 ]
-
-#~ meson.get_compiler('vala').find_library('posix')
 
 executable(
     app, # Binary Name
