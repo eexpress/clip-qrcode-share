@@ -1,49 +1,82 @@
-public class eexpss {
+using Gtk;
+using Posix;
 
-	public static int main(string[] argv) {
-//~ 		Gtk.Entry input;
-//~ 		var input = new Gtk.Entry();
+public class QRCode : Gtk.Application {
 
-		var app = new Gtk.Application("create.meson.build.vala", ApplicationFlags.FLAGS_NONE);
+	private Entry input;
+	const string fqrcode = "/tmp/qrcode.png";
 
-		app.activate.connect(() => {
-			var window = new Gtk.ApplicationWindow(app);
+	public QRCode() {
+		Object(application_id : "org.example.clip2qrcode", flags : ApplicationFlags.HANDLES_OPEN);
+	}
 
-			var pg = new Adw.PreferencesGroup();
+	protected override void activate() {
 
-//~ The name `EntryRow' does not exist in the context of `Adw' (libadwaita-1)
-			var input = new Gtk.Entry();
-			input.primary_icon_name = "edit-clear-all-symbolic";
-			input.secondary_icon_name = "folder-saved-search-symbolic";
-			pg.add(input);
+		var window = new ApplicationWindow(this);
+		string last_clip = "";
+		string last_prim = "";
 
-			var img = new Gtk.Image();
-			img.set_from_icon_name("edit-find-symbolic");
-			img.pixel_size = 280;
-			var gesture = new Gtk.GestureClick();
-			gesture.connect("released", click);
-//~ runtime error: g_object_connect: invalid signal spec "released"
-//~ 			gesture.connect("released", (n_press, x, y) =>{
-//~ 			});
-//~ error: lambda expression not allowed in this context
-			img.add_controller(gesture);
-			pg.add(img);
+		var pg = new Adw.PreferencesGroup();
+		var clip = Gdk.Display.get_default().get_clipboard();
+		var prim = Gdk.Display.get_default().get_primary_clipboard();
 
-			window.set_title("Clip 2 QRcode");
-			window.set_child(pg);
-			window.present();
+		input = new Entry();
+		input.primary_icon_name = "edit-clear-all-symbolic";
+		input.secondary_icon_name = "folder-saved-search-symbolic";
+		input.icon_release.connect((pos) => {
+			if (pos == EntryIconPosition.PRIMARY) {
+				input.text = "";
+			}
 		});
+		pg.add(input);
 
-		return app.run(argv);
+		var img = new Image();
+		img.set_from_icon_name("edit-find-symbolic");
+		img.pixel_size = 280;
+		var gesture = new Gtk.GestureClick();
+		gesture.released.connect((n_press, x, y) => {
+			clip.read_text_async.begin(null, (obj, res) => {
+					try {
+						string s = clip.read_text_async.end(res);
+						if (s == last_clip) return;
+						show(s);
+					} catch (Error e) {
+						warning(e.message);
+					}
+				});
+			prim.read_text_async.begin(null, (obj, res) => {
+					try {
+						string s = prim.read_text_async.end(res);
+						if (s == last_prim) return;
+						show(s);
+					} catch (Error e) {
+						warning(e.message);
+					}
+				});
+		});
+		img.add_controller(gesture);
+		pg.add(img);
+
+		var txt = new Label("");
+		txt.label = "null";
+		pg.add(txt);
+
+		window.set_title("Clip 2 QRcode");
+		window.set_child(pg);
+		window.present();
 	}
 
-//~ ⭕ pinfo libqrcodegen-dev
-//~ https://github.com/nayuki/QR-Code-generator
-
-	private	void click(int n_press, double x, double y) {
-		stdout.printf("clicked.");
-//~ 		input.text = "clicked";
-//~  error: The name `input' does not exist in the context of `eexpss.click'
-		return;
+	private void show(string s) {
+		input.text = s;
+		Posix.system("qrencode " + s + " -o " + fqrcode + "&");
+		img.set_from_file(fqrcode);
 	}
+
+	public static int main(string[] args) {
+		var app = new QRCode();
+		return app.run(args);
+	}
+
+	//~ ⭕ pinfo libqrcodegen-dev
+	//~ https://github.com/nayuki/QR-Code-generator
 }
