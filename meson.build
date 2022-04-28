@@ -17,7 +17,6 @@ lib_dependencies = [
 
 executable(
     app, # Binary Name
-#~     'clip2qrcode', # Binary Name
     # Source Files
     app + '.vala',
     dependencies: lib_dependencies,
