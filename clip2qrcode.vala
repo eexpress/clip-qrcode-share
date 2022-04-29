@@ -54,16 +54,19 @@ public class QRCode : Gtk.Application {
 						if (text == null || text == "" || text == last_clip) return;
 						last_clip = text;
 
+						bool has_file = false;
 						string[] filearray = text.split("\n");
 						foreach (unowned string i in filearray) {
 							File file = File.new_for_path(i);
 							if(!file.query_exists()) continue;
 							File link = File.new_for_path(linkdir + File.new_for_path(i).get_basename());
 							if (link.query_exists ()) continue;
+							has_file = true;
 							try {
 								link.make_symbolic_link(i);
 							} catch (Error e) { warning(e.message); }
 						}
+						if(!has_file) return;
 						if(ipadd != null){
 							show(@"http://$(ipadd):$(port)/");	//ricotz
 						} else {
@@ -94,6 +97,9 @@ public class QRCode : Gtk.Application {
 
 		window.set_title("Clip 2 QRcode");
 		window.set_child(pg);
+//~ 		window.make_above();
+//~ 		window.set_keep_above(true);
+//~ 		make_above(window);
 		window.present();
 	}
 
@@ -138,9 +144,10 @@ public class QRCode : Gtk.Application {
 			GLib.assert(udp4 != null);
 			udp4.connect(new InetSocketAddress.from_string("192.168.0.1", int.parse(port)));
 			ipv4 = ((InetSocketAddress) udp4.local_address).address.to_string();
-//~ 			lwildberg Nahuel InetSocketAddress is derived from SocketAddress and adds the address property.
+//~ lwildberg: InetSocketAddress is derived from SocketAddress and adds the address property.
 			udp4.close();
 		} catch (Error e) {
+//~ If write as `catch (e)`, ninja will enter a dead loop.
 			udp4 = null;
 			ipv4 = null;
 		}
