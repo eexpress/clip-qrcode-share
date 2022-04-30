@@ -12,6 +12,7 @@ private
 	Image img;
 private
 	Label txt;
+private ApplicationWindow win;
 	const string pngfile = "/tmp/qrcode.png";
 	const string linkdir = "/tmp/qrcode.lnk/";
 	const string port	 = "12800";
@@ -27,7 +28,7 @@ public
 protected
 	override void activate() {
 
-		var window		 = new ApplicationWindow(this);
+		win		 = new ApplicationWindow(this);
 		string last_clip = "";
 		string last_prim = "";
 		mkdir(linkdir, 0750);
@@ -112,27 +113,29 @@ protected
 		txt.label = "null";
 		pg.add(txt);
 
-		window.set_title("Clip QRcode Share");
-		window.set_child(pg);
-		// Gtk4 常规没有 above 了。只 GJS 提供 Meta.window 有这功能。
-		//~ 		window.make_above();
-		window.present();
+		win.set_title("Clip QRcode Share");
+		win.set_child(pg);
+//~ 		win.default_width = 300;
+		// Gtk4 常规没有 above 了。只 GJS 提供 Meta.win 有这功能。
+//~ 		win.move(0,0);
+//~ 		win.set_position (WindowPosition.NONE);
+		//~ 		win.make_above();
+		win.present();
 	}
 
 protected
-	override void shutdown() {
-		try {
-			GLib.Dir dir  = GLib.Dir.open(linkdir, 0);
-			string ? name = null;
-			while ((name = dir.read_name()) != null) {
-				File file = File.new_for_path(name);
+	override void shutdown() {		// 从 GLib.Application 继承的，应该是对应 activate
+			try {
+				GLib.Dir dir  = GLib.Dir.open(linkdir, 0);
+				string ? name = null;
+				while ((name = dir.read_name()) != null) {
+					File file = File.new_for_path(name);
+					file.delete();
+				}
+				rmdir(linkdir);
+				File file = File.new_for_path(pngfile);
 				file.delete();
-			}
-			rmdir(linkdir);
-			File file = File.new_for_path(pngfile);
-			file.delete();
-		} catch (Error e) { }
-		//~ 		(clip2qrcode:30550): GLib-GIO-CRITICAL **: 22:25:07.999: GApplication subclass 'QRCode' failed to chain up on ::shutdown (from end of override function)
+			} catch (Error e) { }
 	}
 
 private
@@ -142,18 +145,18 @@ private
 			return;
 		}
 		print("show:" + s + "\n");
-		input.text = s;
 		txt.label  = s;
 		File file  = File.new_for_path(pngfile);
 		try {
 			file.delete();
 		} catch (Error e) { }
-		//~ 		try{	//单引号会导致截断，转义也不对。
-		//~ 			GLib.Regex regex = new GLib.Regex ("'");
-		//~ 			s = regex.replace (s, s.length, 0, "⭕'");	//直接修改s会导致溢出。需使用新变量 str。
-		//~ 			txt.label = s;
-		//~ 		} catch (Error e) {print ("%s", e.message);}
-		Posix.system("qrencode '" + s + "' -o " + pngfile);
+
+//直接修改s会导致溢出。需使用新变量 str。
+		string str = s.replace("\\","\\\\").replace("\$","\\\$").replace("\"", "\\\"").replace("\`", "\\\`");
+		input.text = str;
+		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");
+//~ 		Posix.system(@"qrencode \"$(str)\" `xxx` -o $(pngfile)");
+// 单引号包裹字符串时，转义也失效，所以不能再包含单引号。由此只能使用双引号包裹字符串。
 		img.set_from_file(pngfile);
 	}
 
