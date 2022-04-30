@@ -3,6 +3,8 @@ using Posix;
 
 public
 class QRCode : Gtk.Application {
+	//~ clang-format 老截断 public private 成单行，还把 `=>` 搞成 `=>`（JS中正常)，没法强制成 csharp。
+	//~ ⭕ clang-format -style=file -assume-filename=xx.js -i clip-qrcode-share.vala 也无效。
 
 private
 	Entry input;
@@ -31,7 +33,7 @@ protected
 		mkdir(linkdir, 0750);
 		chdir(linkdir);
 		string ipadd = get_lan_ip();
-		Posix.system("python3 -m http.server " + port + "&");  // auto kill after close
+		Posix.system("python3 -m http.server " + port + "&");  // 退出时正常杀死
 
 		var pg = new Adw.PreferencesGroup();
 		pg.set_margin_top(15);
@@ -112,9 +114,8 @@ protected
 
 		window.set_title("Clip QRcode Share");
 		window.set_child(pg);
+		// Gtk4 常规没有 above 了。只 GJS 提供 Meta.window 有这功能。
 		//~ 		window.make_above();
-		//~ 		window.set_keep_above(true);
-		//~ 		make_above(window);
 		window.present();
 	}
 
@@ -149,7 +150,7 @@ private
 		} catch (Error e) { }
 		//~ 		try{	//单引号会导致截断，转义也不对。
 		//~ 			GLib.Regex regex = new GLib.Regex ("'");
-		//~ 			s = regex.replace (s, s.length, 0, "⭕'");	//直接修改s会导致溢出。
+		//~ 			s = regex.replace (s, s.length, 0, "⭕'");	//直接修改s会导致溢出。需使用新变量 str。
 		//~ 			txt.label = s;
 		//~ 		} catch (Error e) {print ("%s", e.message);}
 		Posix.system("qrencode '" + s + "' -o " + pngfile);
@@ -168,7 +169,7 @@ private
 			//~ lwildberg: InetSocketAddress is derived from SocketAddress and adds the address property.
 			udp4.close();
 		} catch (Error e) {
-			//~ If write as `catch (e)`, ninja will enter a dead loop.
+			//~ 如果错写成 `catch (e)`, ninja 会吊死在后台。
 			udp4 = null;
 			ipv4 = null;
 		}
@@ -188,7 +189,7 @@ public
 		var app = new QRCode();
 		return app.run(args);
 	}
-
+	// 添加库编译后，仍需要安装运行库。算了，不折腾。
 	//~ ⭕ pinfo libqrcodegen-dev
 	//~ https://github.com/nayuki/QR-Code-generator
 }
