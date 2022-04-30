@@ -151,11 +151,12 @@ private
 			file.delete();
 		} catch (Error e) { }
 
-//直接修改s会导致溢出。需使用新变量 str。
-		string str = s.replace("\\","\\\\").replace("\$","\\\$").replace("\"", "\\\"").replace("\`", "\\\`");
+// 直接修改s会导致溢出。需使用新变量 str。
+		string str = s.replace("\\","\\\\").replace("\$","\\\$").replace("\"", "\\\"").replace("`", "\\`");
+//~ 反引号 ` 对于 vala 不需要转义。但是为了避免被 shell 当成执行语句，在 shell 需要转义。所以只添加一个反斜杠 \\ 。
+//~ error: invalid escape sequence ---> replace("\`", "\\\`")
 		input.text = str;
 		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");
-//~ 		Posix.system(@"qrencode \"$(str)\" `xxx` -o $(pngfile)");
 // 单引号包裹字符串时，转义也失效，所以不能再包含单引号。由此只能使用双引号包裹字符串。
 		img.set_from_file(pngfile);
 	}
