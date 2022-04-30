@@ -2,12 +2,12 @@
 #~ first statement must be a call to project()
 project(
 #~     app, # Project ID
-    'clip2qrcode', # Project ID
+    'clip-qrcode-share', # Project ID
     ['vala', 'c'], # Compilers
     version: '0.1' # Version
 )
 
-app = 'clip2qrcode'
+app = 'clip-qrcode-share'
 
 lib_dependencies = [
     dependency('gtk4'),
