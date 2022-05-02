@@ -1,32 +1,26 @@
 using Gtk;
 using Posix;
 
-public
-class QRCode : Gtk.Application {
+public class QRCode : Gtk.Application {
 	//~ clang-format 老截断 public private 成单行，还把 `=>` 搞成 `=>`（JS中正常)，没法强制成 csharp。
-	//~ ⭕ clang-format -style=file -assume-filename=xx.js -i clip-qrcode-share.vala 也无效。
+	//~ ⭕ clang-format -style=file -assume-filename=xx.cs -i clip-qrcode-share.vala 也无效。
 
-private
-	Entry input;
-private
-	Image img;
-private
-	Label txt;
-private ApplicationWindow win;
+	private	Entry input;
+	private	Image img;
+	private	Label txt;
+	private ApplicationWindow win;
 	const string pngfile = "/tmp/qrcode.png";
 	const string linkdir = "/tmp/qrcode.lnk/";
 	const string port	 = "12800";
 
-public
-	QRCode() {
+	public QRCode() {
 		Object(application_id
 			   : "org.eexpss.clip2qrcode",
 			   flags
 			   : ApplicationFlags.HANDLES_OPEN);
 	}
 
-protected
-	override void activate() {
+	protected override void activate() {
 
 		win		 = new ApplicationWindow(this);
 		string last_clip = "";
@@ -34,7 +28,10 @@ protected
 		mkdir(linkdir, 0750);
 		chdir(linkdir);
 		string ipadd = get_lan_ip();
-		Posix.system("python3 -m http.server " + port + "&");  // 退出时正常杀死
+		string logopng = get_logo_png();
+
+//~ 		Posix.system("python3 -m http.server " + port + "&");  // 退出时正常杀死
+		Posix.system(@"droopy -d $(linkdir) $(logopng) -m \"上传文件到<br>$(linkdir)\" --dl $(port) &");  // 退出时没杀死
 
 		var pg = new Adw.PreferencesGroup();
 		pg.set_margin_top(15);
@@ -56,6 +53,7 @@ protected
 				show(s);
 			}
 		});
+		input.text = "version 0.2";
 		pg.add(input);
 
 		img = new Image();
@@ -123,23 +121,22 @@ protected
 		win.present();
 	}
 
-protected
-	override void shutdown() {		// 从 GLib.Application 继承的，应该是对应 activate
-			try {
-				GLib.Dir dir  = GLib.Dir.open(linkdir, 0);
-				string ? name = null;
-				while ((name = dir.read_name()) != null) {
-					File file = File.new_for_path(name);
-					file.delete();
-				}
-				rmdir(linkdir);
-				File file = File.new_for_path(pngfile);
+	protected override void shutdown() {		// 从 GLib.Application 继承的，应该是对应 activate
+		try {
+			GLib.Dir dir  = GLib.Dir.open(linkdir, 0);
+			string ? name = null;
+			while ((name = dir.read_name()) != null) {
+				File file = File.new_for_path(name);
 				file.delete();
-			} catch (Error e) { }
+			}
+			rmdir(linkdir);
+			File file = File.new_for_path(pngfile);
+			file.delete();
+		} catch (Error e) { }
+		Posix.system("pkill droopy");
 	}
 
-private
-	void show(string s) {
+	private void show(string s) {
 		if (s == null) {
 			txt.label = "null";
 			return;
@@ -153,7 +150,8 @@ private
 
 // 直接修改s会导致溢出。需使用新变量 str。
 		string str = s.replace("\\","\\\\").replace("\$","\\\$").replace("\"", "\\\"").replace("`", "\\`");
-//~ 反引号 ` 对于 vala 不需要转义。但是为了避免被 shell 当成执行语句，在 shell 需要转义。所以只添加一个反斜杠 \\ 。
+//~ lwildberg: 反引号 ` 对于 vala 不需要转义。
+//~ 但是为了避免被 shell 当成执行语句，在 shell 需要转义。所以只添加一个反斜杠 \\ 。
 //~ error: invalid escape sequence ---> replace("\`", "\\\`")
 		input.text = str;
 		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");
@@ -161,8 +159,18 @@ private
 		img.set_from_file(pngfile);
 	}
 
-private
-	string get_lan_ip() {
+	private string get_logo_png() {
+		try {
+			GLib.Dir dir  = GLib.Dir.open("/usr/share/plymouth/", 0);
+			string ? name = null;
+			while ((name = dir.read_name()) != null) {
+				if(name.index_of("logo.png") >= 0) {return @"-p /usr/share/plymouth/$(name)";};
+			}
+		} catch (Error e) { }
+		return "";
+	}
+
+	private string get_lan_ip() {
 		Socket udp4;
 		string ipv4 = null;
 		try {
@@ -180,15 +188,20 @@ private
 		return ipv4;
 	}
 
-public
-	static int main(string[] args) {
-		const string cmd = "qrencode";
-		string r		 = Environment.find_program_in_path(cmd);
+	static bool check_app(string app) {
+	// 设置为 static，才能在未实例化前，内部调用
+		string r = Environment.find_program_in_path(app);
 		if (r == null) {
 			//~ 			Main.notify(_(`Need install ${cmd} command.`));
-			print(@"Need install $(cmd) command.");
-			return 0;
+			print(@"Need install $(app) command.");
+			return false;
 		}
+		return true;
+	}
+
+	public static int main(string[] args) {
+		if(! check_app("qrencode")) return 0;
+		if(! check_app("droopy")) return 0;
 
 		var app = new QRCode();
 		return app.run(args);
