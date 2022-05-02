@@ -1,5 +1,7 @@
 using Gtk;
 using Posix;
+using Qrencode;
+//~ https://github.com/bcedu/ValaSimpleHTTPServer
 
 public class QRCode : Gtk.Application {
 	//~ clang-format 老截断 public private 成单行，还把 `=>` 搞成 `=>`（JS中正常)，没法强制成 csharp。
@@ -155,6 +157,19 @@ public class QRCode : Gtk.Application {
 //~ error: invalid escape sequence ---> replace("\`", "\\\`")
 		input.text = str;
 		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");
+		var qrcode = new QRcode.encodeString(str, 0, EcLevel.H, Mode.B8, 1);
+		if (qrcode != null) {
+			for (int iy = 0; iy < qrcode.width; iy++) {
+				for (int ix = 0; ix < qrcode.width; ix++) {
+					if ((qrcode.data[iy * qrcode.width + ix] & 1) != 0) {
+						print("\u2588\u2588");
+					}else{
+						print("  ");
+					}
+				}
+				print("\n");
+			}
+		}
 // 单引号包裹字符串时，转义也失效，所以不能再包含单引号。由此只能使用双引号包裹字符串。
 		img.set_from_file(pngfile);
 	}
