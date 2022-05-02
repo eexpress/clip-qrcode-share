@@ -14,6 +14,8 @@
 > `droopy` must be installed. (new in version 0.2)
 > excute `clip-qrcode-share`.
 
+> or download `clip-qrcode-share-0.2.deb`.
+
 ![](screenshot0.png)
 ![](screenshot1.png)
 
