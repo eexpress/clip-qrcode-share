@@ -19,4 +19,4 @@
 
 > mobile screenshot
 
-![](screenshot2.png)
+![](screenshot2.jpg)
