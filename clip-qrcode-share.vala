@@ -1,7 +1,11 @@
 using Gtk;
 using Posix;
-using Qrencode;
+//~ using Qrencode;	// depend libqrencode-dev
 //~ https://github.com/bcedu/ValaSimpleHTTPServer
+
+//~ error: Package `libqrencode' not found in specified Vala API directories or GObject-Introspection GIR directories
+//~ ⭕ cd /usr/share/vala-0.56/vapi/
+//~ ⭕ sudo ln -sf ~/project/clip-qrcode-share/libqrencode.vapi .
 
 public class QRCode : Gtk.Application {
 	//~ clang-format 老截断 public private 成单行，还把 `=>` 搞成 `=>`（JS中正常)，没法强制成 csharp。
@@ -156,20 +160,20 @@ public class QRCode : Gtk.Application {
 //~ 但是为了避免被 shell 当成执行语句，在 shell 需要转义。所以只添加一个反斜杠 \\ 。
 //~ error: invalid escape sequence ---> replace("\`", "\\\`")
 		input.text = str;
-		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");
-		var qrcode = new QRcode.encodeString(str, 0, EcLevel.H, Mode.B8, 1);
-		if (qrcode != null) {
-			for (int iy = 0; iy < qrcode.width; iy++) {
-				for (int ix = 0; ix < qrcode.width; ix++) {
-					if ((qrcode.data[iy * qrcode.width + ix] & 1) != 0) {
-						print("\u2588\u2588");
-					}else{
-						print("  ");
-					}
-				}
-				print("\n");
-			}
-		}
+		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");	//depend qrencode + libqrencode4 + libpng16-16
+//~ 		var qrcode = new QRcode.encodeString(str, 0, EcLevel.H, Mode.B8, 1);	//depend libqrencode4
+//~ 		if (qrcode != null) {
+//~ 			for (int iy = 0; iy < qrcode.width; iy++) {
+//~ 				for (int ix = 0; ix < qrcode.width; ix++) {
+//~ 					if ((qrcode.data[iy * qrcode.width + ix] & 1) != 0) {
+//~ 						print("██");	//\u2588\u2588 full block
+//~ 					}else{
+//~ 						print("  ");
+//~ 					}
+//~ 				}
+//~ 				print("\n");
+//~ 			}
+//~ 		}
 // 单引号包裹字符串时，转义也失效，所以不能再包含单引号。由此只能使用双引号包裹字符串。
 		img.set_from_file(pngfile);
 	}

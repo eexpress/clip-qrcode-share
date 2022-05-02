@@ -12,7 +12,7 @@ app = 'clip-qrcode-share'
 lib_dependencies = [
     dependency('gtk4'),
     dependency('libadwaita-1'),
-    dependency('libqrencode', version: '>=4.0.0'),
+#~     dependency('libqrencode', version: '>=4.0.0'), # depend libqrencode-dev
     meson.get_compiler('vala').find_library('posix'),
 ]
 
