@@ -18,6 +18,9 @@ lib_dependencies = [
     dependency('libadwaita-1'),
     dependency('libqrencode', version: '>=4.0.0'), # depend libqrencode-dev
     meson.get_compiler('vala').find_library('posix'),
+#~ https://mesonbuild.com/Vala.html#adding-to-valas-search-path
+#~ The standard maths functions are already bound in glib-2.0.vapi, but the GNU C library requires linking to the maths library separately.
+#~     meson.get_compiler('c').find_library('m', required: false),
 ]
 
 executable(
