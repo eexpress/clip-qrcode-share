@@ -9,10 +9,14 @@ project(
 
 #~ app = 'clip-qrcode-share'
 
+#~ 添加 vapi 搜索目录
+vapi_dir = meson.current_source_dir()
+add_project_arguments(['--vapidir', vapi_dir], language: 'vala')
+
 lib_dependencies = [
     dependency('gtk4'),
     dependency('libadwaita-1'),
-#~     dependency('libqrencode', version: '>=4.0.0'), # depend libqrencode-dev
+    dependency('libqrencode', version: '>=4.0.0'), # depend libqrencode-dev
     meson.get_compiler('vala').find_library('posix'),
 ]
 

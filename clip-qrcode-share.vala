@@ -1,6 +1,6 @@
 using Gtk;
 using Posix;
-//~ using Qrencode;	// depend libqrencode-dev
+using Qrencode;	// depend libqrencode-dev
 //~ https://github.com/bcedu/ValaSimpleHTTPServer
 //~ 分离头指针状态。
 //~ ⭕ git reset --hard d87c089
