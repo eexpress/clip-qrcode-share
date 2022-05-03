@@ -7,7 +7,7 @@ project(
     version: '0.1' # Version
 )
 
-app = 'clip-qrcode-share'
+#~ app = 'clip-qrcode-share'
 
 lib_dependencies = [
     dependency('gtk4'),
@@ -20,7 +20,7 @@ executable(
 #~     app, # Binary Name
     meson.project_name(), # Binary Name
     # Source Files
-    app + '.vala',
+    meson.project_name() + '.vala',
     dependencies: lib_dependencies,
     install: false
 )
