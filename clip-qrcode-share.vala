@@ -2,6 +2,11 @@ using Gtk;
 using Posix;
 //~ using Qrencode;	// depend libqrencode-dev
 //~ https://github.com/bcedu/ValaSimpleHTTPServer
+//~ 分离头指针状态。
+//~ ⭕ git reset --hard d87c089
+//~ ⭕ git pull
+//~ 更新 d87c089..9a7e1d7
+//~ Fast-forward
 
 //~ error: Package `libqrencode' not found in specified Vala API directories or GObject-Introspection GIR directories
 //~ ⭕ cd /usr/share/vala-0.56/vapi/
