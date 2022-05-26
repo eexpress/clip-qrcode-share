@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=clip-qrcode-share
+Name[zh_CN]=剪贴板-文件-二维码-共享
+Comment=Sharing clipboard and files by scan QRCode.
+Comment[zh_CN]=通过扫描QRCode共享剪贴板和文件。
+Categories=Office;
+Exec=clip-qrcode-share
+Icon=clip-qrcode-share.png
+Terminal=false
+Type=Application
+Keywords=clip,qrcode,share
