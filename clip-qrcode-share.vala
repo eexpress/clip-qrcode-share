@@ -124,6 +124,7 @@ public class QRCode : Gtk.Application {
 
 		win.set_title("Clip QRcode Share");
 		win.set_child(pg);
+		win.resizable = true;
 //~ 		win.default_width = 300;
 		// Gtk4 常规没有 above 了。只 GJS 提供 Meta.win 有这功能。
 //~ 		win.move(0,0);
@@ -165,6 +166,7 @@ public class QRCode : Gtk.Application {
 //~ 但是为了避免被 shell 当成执行语句，在 shell 需要转义。所以只添加一个反斜杠 \\ 。
 //~ error: invalid escape sequence ---> replace("\`", "\\\`")
 		input.text = str;
+		win.width_request = 300;
 		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");	//depend qrencode + libqrencode4 + libpng16-16
 //~ 		var qrcode = new QRcode.encodeString(str, 0, EcLevel.H, Mode.B8, 1);	//depend libqrencode4
 //~ 		if (qrcode != null) {
