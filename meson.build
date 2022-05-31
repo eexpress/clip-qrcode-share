@@ -16,7 +16,7 @@ add_project_arguments(['--vapidir', vapi_dir], language: 'vala')
 lib_dependencies = [
     dependency('gtk4'),
     dependency('libadwaita-1'),
-    dependency('libqrencode', version: '>=4.0.0'), # depend libqrencode-dev
+#~     dependency('libqrencode', version: '>=4.0.0'), # depend libqrencode-dev
     meson.get_compiler('vala').find_library('posix'),
 #~ https://mesonbuild.com/Vala.html#adding-to-valas-search-path
 #~ The standard maths functions are already bound in glib-2.0.vapi, but the GNU C library requires linking to the maths library separately.

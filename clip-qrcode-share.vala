@@ -1,6 +1,6 @@
 using Gtk;
 using Posix;
-using Qrencode;	// depend libqrencode-dev
+//~ using Qrencode;	// depend libqrencode-dev
 //~ https://github.com/bcedu/ValaSimpleHTTPServer
 //~ 分离头指针状态。
 //~ ⭕ git reset --hard d87c089
@@ -12,7 +12,7 @@ using Qrencode;	// depend libqrencode-dev
 //~ ⭕ cd /usr/share/vala-0.56/vapi/
 //~ ⭕ sudo ln -sf ~/project/clip-qrcode-share/libqrencode.vapi .
 
-public class QRCode : Gtk.Application {
+public class QRCode : Adw.Application {
 	//~ clang-format 老截断 public private 成单行，还把 `=>` 搞成 `=>`（JS中正常)，没法强制成 csharp。
 	//~ ⭕ clang-format -style=file -assume-filename=xx.cs -i clip-qrcode-share.vala 也无效。
 
@@ -25,10 +25,8 @@ public class QRCode : Gtk.Application {
 	const string port	 = "12800";
 
 	public QRCode() {
-		Object(application_id
-			   : "org.eexpss.clip2qrcode",
-			   flags
-			   : ApplicationFlags.HANDLES_OPEN);
+		Object(application_id			   : "org.eexpss.clip2qrcode",
+			   flags			   : ApplicationFlags.HANDLES_OPEN);
 	}
 
 	protected override void activate() {
@@ -41,7 +39,7 @@ public class QRCode : Gtk.Application {
 		string ipadd = get_lan_ip();
 		string logopng = get_logo_png();
 
-//~ 		Posix.system("python3 -m http.server " + port + "&");  // 退出时正常杀死
+		// Posix.system("python3 -m http.server " + port + "&");  // 退出时正常杀死
 		Posix.system(@"droopy -d $(linkdir) $(logopng) -m \"上传文件到<br>$(linkdir)\" --dl $(port) &");  // 退出时没杀死
 
 		var pg = new Adw.PreferencesGroup();
@@ -130,6 +128,7 @@ public class QRCode : Gtk.Application {
 //~ 		win.move(0,0);
 //~ 		win.set_position (WindowPosition.NONE);
 		//~ 		win.make_above();
+
 		win.present();
 	}
 
