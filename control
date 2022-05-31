@@ -1,0 +1,12 @@
+Package        : clip-qrcode-share
+Version        : 0.3
+Priority       : extra
+Section        : x11
+Maintainer     : eexpss <eexpss@gmail.com>
+Installed-Size : 92K
+Download-Size  : 24K
+Homepage       : https://github.com/eexpress/clip-qrcode-share 
+Architecture   : amd64
+Depends        : libadwaita-1-0 (>= 1.0), libgtk-4-1 (>= 4.6.0), libcairo2 (>= 1.1), qrencode, droopy
+Description    : clip-qrcode-share
+  Sharing clipboard and files to mobile by scan QRCode.

@@ -1,0 +1,12 @@
+#	--------▶  2022-05-31 18:19:17 ◀ --------
+⭕ create-rpm.pl clip-qrcode-share clip-qrcode-share.png clip-qrcode-share.desktop v0.3 droopy
+⭕ rpmbuild -bb ~/rpmbuild/SPECS/clip-qrcode-share.spec
+⭕ cp ~/rpmbuild/RPMS/noarch/clip-qrcode-share-0.3-1.fc36.noarch.rpm .
+⭕ cp ~/rpmbuild/SPECS/clip-qrcode-share.spec .
+
+#	--------▶  2022-05-31 18:20:50 ◀ --------
+⭕ create-deb.pl clip-qrcode-share clip-qrcode-share.png clip-qrcode-share.desktop v0.3
+⭕ cp /tmp/clip-qrcode-share-0.3.deb .
+⭕ cp /tmp/clip-qrcode-share-0.3/DEBIAN/control .
+
+
