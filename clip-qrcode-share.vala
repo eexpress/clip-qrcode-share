@@ -25,13 +25,12 @@ public class QRCode : Adw.Application {
 	const string port	 = "12800";
 
 	public QRCode() {
-		Object(application_id			   : "org.eexpss.clip2qrcode",
-			   flags			   : ApplicationFlags.HANDLES_OPEN);
+		Object(application_id : "org.eexpss.clip2qrcode", flags : ApplicationFlags.HANDLES_OPEN);
 	}
 
 	protected override void activate() {
 
-		var win		 = new ApplicationWindow(this);
+		var win = new ApplicationWindow(this);
 		string last_clip = "";
 		string last_prim = "";
 		mkdir(linkdir, 0750);
