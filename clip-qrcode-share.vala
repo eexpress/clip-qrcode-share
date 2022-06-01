@@ -19,7 +19,7 @@ public class QRCode : Adw.Application {
 	private	Entry input;
 	private	Image img;
 	private	Label txt;
-	private ApplicationWindow win;
+//~ 	private ApplicationWindow win;
 	const string pngfile = "/tmp/qrcode.png";
 	const string linkdir = "/tmp/qrcode.lnk/";
 	const string port	 = "12800";
@@ -31,7 +31,7 @@ public class QRCode : Adw.Application {
 
 	protected override void activate() {
 
-		win		 = new ApplicationWindow(this);
+		var win		 = new ApplicationWindow(this);
 		string last_clip = "";
 		string last_prim = "";
 		mkdir(linkdir, 0750);
@@ -152,7 +152,7 @@ public class QRCode : Adw.Application {
 			txt.label = "null";
 			return;
 		}
-		print("show:" + s + "\n");
+//~ 		print("show:" + s + "\n");
 		txt.label  = s;
 		File file  = File.new_for_path(pngfile);
 		try {
@@ -165,7 +165,6 @@ public class QRCode : Adw.Application {
 //~ 但是为了避免被 shell 当成执行语句，在 shell 需要转义。所以只添加一个反斜杠 \\ 。
 //~ error: invalid escape sequence ---> replace("\`", "\\\`")
 		input.text = str;
-		win.width_request = 300;
 		Posix.system(@"qrencode \"$(str)\" -o $(pngfile)");	//depend qrencode + libqrencode4 + libpng16-16
 //~ 		var qrcode = new QRcode.encodeString(str, 0, EcLevel.H, Mode.B8, 1);	//depend libqrencode4
 //~ 		if (qrcode != null) {
@@ -182,16 +181,18 @@ public class QRCode : Adw.Application {
 //~ 		}
 // 单引号包裹字符串时，转义也失效，所以不能再包含单引号。由此只能使用双引号包裹字符串。
 		img.set_from_file(pngfile);
+//~ 		input.set_size_request(img.pixel_size + 20, -1);
+//~ 		input.width_request = img.pixel_size + 20;
+//~ 		pg.width_request = img.pixel_size + 20;	// 280 + 20 反正无效？？？？
+//~ 		win.width_request = img.pixel_size + 40;	// 280 + 20 反正无效？？？？
 	}
 
 	private string get_logo_png() {
-		try {
-			GLib.Dir dir  = GLib.Dir.open("/usr/share/plymouth/", 0);
-			string ? name = null;
-			while ((name = dir.read_name()) != null) {
-				if(name.index_of("logo.png") >= 0) {return @"-p /usr/share/plymouth/$(name)";};
-			}
-		} catch (Error e) { }
+		string[] logo = {"/usr/share/plymouth/ubuntu-logo.png", "/usr/share/pixmaps/fedora-logo.png"};
+		foreach (string s in logo) {
+			File file = File.new_for_path (s);
+			if(file.query_exists ()){return @"-p $(s)";}
+		}
 		return "";
 	}
 
