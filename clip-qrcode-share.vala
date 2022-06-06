@@ -1,5 +1,5 @@
 //~ 1. I use Adw.Application, but the Window **title** is not Adw.Window, so no Adw dark theme.
-//~ 2. I can not shrink the window size after window/entry/label become very wide.
+//~ 2. I can not shrink the window size after window/entry/label become very wide. L191-197 is my test code.
 //~ 	step here:
 //~ 	select long text, click window to create QRCode, the window becomes wider.
 //~ 	select short text, click window, I want the window size shrink to fit the short label.
