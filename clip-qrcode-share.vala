@@ -1,3 +1,10 @@
+//~ 1. I use Adw.Application, but the Window **title** is not Adw.Window, so no Adw dark theme.
+//~ 2. I can not shrink the window size after window/entry/label become very wide.
+//~ 	step here:
+//~ 	select long text, click window to create QRCode, the window becomes wider.
+//~ 	select short text, click window, I want the window size shrink to fit the short label.
+//~ 3. when exit, I got `(clip-qrcode-share:7927): GLib-GIO-CRITICAL **: 05:32:29.043: GApplication subclass 'QRCode' failed to chain up on ::shutdown (from end of override function)`
+
 using Gtk;
 using Posix;
 //~ using Qrencode;	// depend libqrencode-dev
@@ -19,7 +26,7 @@ public class QRCode : Adw.Application {
 	private	Entry input;
 	private	Image img;
 	private	Label txt;
-//~ 	private ApplicationWindow win;
+	private ApplicationWindow win;
 	const string pngfile = "/tmp/qrcode.png";
 	const string linkdir = "/tmp/qrcode.lnk/";
 	const string port	 = "12800";
@@ -30,7 +37,8 @@ public class QRCode : Adw.Application {
 
 	protected override void activate() {
 
-		var win = new ApplicationWindow(this);
+//~ 		var win = new ApplicationWindow(this);
+		win = new ApplicationWindow(this);	// Not adw window. No theme?
 		string last_clip = "";
 		string last_prim = "";
 		mkdir(linkdir, 0750);
@@ -184,6 +192,9 @@ public class QRCode : Adw.Application {
 //~ 		input.width_request = img.pixel_size + 20;
 //~ 		pg.width_request = img.pixel_size + 20;	// 280 + 20 反正无效？？？？
 //~ 		win.width_request = img.pixel_size + 40;	// 280 + 20 反正无效？？？？
+		input.queue_resize();
+		txt.queue_resize();
+		win.queue_resize();
 	}
 
 	private string get_logo_png() {
